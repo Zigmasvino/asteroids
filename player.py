@@ -21,7 +21,7 @@ class Player(CircleShape):
     
     def draw(self, screen):
         # Draw the player as a triangle
-        pygame.draw.polygon(screen, (255, 255, 255), self.triangle(),3)
+        pygame.draw.polygon(screen, (255, 255, 255), self.triangle(),2)
     
     def rotate(self, dt):
         # Rotate the player
