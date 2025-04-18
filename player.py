@@ -10,7 +10,8 @@ class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
-        self.timer = 0        
+        self.timer = 0
+        self.score = 0       
 
     # triangle method to get the vertices of the triangle representing the player
     def triangle(self):
@@ -48,9 +49,11 @@ class Player(CircleShape):
             self.move(-dt)
         if keys[pygame.K_SPACE] and self.timer < 0:
             self.shoot()
-
     
     def shoot(self):
         self.timer = PLAYER_SHOOT_COOLDOWN
         bullet = Shot(self.position.x, self.position.y)
         bullet.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+
+    def add_score(self, score):
+        self.score += score

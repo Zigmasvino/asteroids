@@ -6,10 +6,20 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
 
+def draw_score(screen, score, x, y):
+    """
+    Draw the score on the screen.
+    """
+    font = pygame.font.Font(None, 36)
+    text = font.render(f"Score: {score}", True, (255, 255, 255))
+    screen.blit(text, (x, y))
+
+
 def main():
     # Initialize the game
     pygame.init()
     print("Starting Asteroids!")
+    pygame.font.init()
 
     # Set up the game clock
     clock = pygame.time.Clock()
@@ -48,20 +58,25 @@ def main():
         # Update the game objects
         updatable.update(dt)
 
+        # Checking for Player and asteroid collision
         for asteroid in asteroids:            
             if asteroid.collide(player):
                 print("GAME OVER!")
                 sys.exit()
-
+        
+        # Checking for bullet and asteroid collision
         for asteroid in asteroids:
             for bullet in shots:
                 if bullet.collide(asteroid):
                     bullet.kill()
-                    asteroid.kill()
+                    asteroid.split(player)
 
         # Draw the game objects
         for sprite in drawable:            
-            sprite.draw(screen)      
+            sprite.draw(screen)
+
+        # Draw the score
+        draw_score(screen, player.score, 10, 10)     
                    
         
         pygame.display.flip()
