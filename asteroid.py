@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 from constants import *
 from circleshape import CircleShape
 from player import Player
@@ -21,9 +22,21 @@ class Asteroid(CircleShape):
         self.position += self.velocity * dt
 
     def split(self, player):
-        player.add_score(1)
+
+        # Point system based on the size of the asteroid
+        if self.radius == ASTEROID_MAX_RADIUS:
+            player.add_score(1)
+        elif self.radius < ASTEROID_MAX_RADIUS and self.radius > ASTEROID_MIN_RADIUS:
+            player.add_score(2)
+        else:
+            player.add_score(3)
+
+        # Create an explosion effect
+        explosion = Explosion(self.position.x, self.position.y)
+        
         self.kill()
-        random_angle = random.uniform(-30, 30)      
+
+        random_angle = random.uniform(-40, 40)      
         vector_1 = self.velocity.rotate(random_angle)
         vector_2 = self.velocity.rotate(-random_angle)
 
@@ -36,3 +49,37 @@ class Asteroid(CircleShape):
             new_asteroid_2 = Asteroid(self.position.x, self.position.y, new_radius)
             new_asteroid_1.velocity = vector_1 * 1.3
             new_asteroid_2.velocity = vector_2 * 1.4
+
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__(self.__class__.containers)
+        self.position = pygame.math.Vector2(x, y)
+        self.particle_count = EXPLOSION_PARTICLE_COUNT
+        self.particles = []
+        self.duration = EXPLOSION_DURATION
+        self.age = 0
+
+        # this 
+        for _ in range(self.particle_count):
+            angle = random.uniform(0, 360)
+            speed = random.uniform(0.5, 6)
+            direction = pygame.math.Vector2(
+                math.cos(math.radians(angle)),
+                math.sin(math.radians(angle))
+            ) * speed
+            self.particles.append({"position": self.position.copy(), "velocity": direction})
+
+    def update(self, dt):
+        self.age += 1
+        if self.age > self.duration:
+            self.particles = []  # Clear particles when expired
+            return
+
+        for particle in self.particles:
+            particle["position"] += particle["velocity"]
+            particle["velocity"] *= 0.9  # Slow down gradually
+
+    def draw(self, screen):
+        for particle in self.particles:
+            position = particle["position"]  # Fetch the current particle position
+            pygame.draw.circle(screen, (255, 180, 50), (int(position.x), int(position.y)), 2)

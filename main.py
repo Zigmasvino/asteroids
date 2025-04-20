@@ -2,17 +2,17 @@ import pygame
 import sys
 from constants import *
 from player import Player
-from asteroid import Asteroid
+from asteroid import Asteroid, Explosion
 from asteroidfield import AsteroidField
 from shot import Shot
 
-def draw_score(screen, score, x, y):
+def draw_score(screen, score, lives):
     """
     Draw the score on the screen.
     """
     font = pygame.font.Font(None, 36)
-    text = font.render(f"Score: {score}", True, (255, 255, 255))
-    screen.blit(text, (x, y))
+    text = font.render(f"Score: {score} Lives: {lives}", True, (255, 255, 255))
+    screen.blit(text, (10, 10))
 
 
 def main():
@@ -36,6 +36,7 @@ def main():
     Asteroid.containers = updatable, drawable, asteroids
     AsteroidField.containers = updatable
     Shot.containers = shots, drawable, updatable
+    Explosion.containers = drawable,updatable
 
     # Add the player to the updatable and drawable groups
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)  
@@ -60,11 +61,19 @@ def main():
 
         # Checking for Player and asteroid collision
         for asteroid in asteroids:            
-            if asteroid.collide(player):
+            if asteroid.collide(player) and player.lives <= 1:
                 print("GAME OVER!")
                 sys.exit()
+            else:
+                if asteroid.collide(player):
+                    player.lives -= 1
+                    player.position = pygame.Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+                    player.velocity = pygame.Vector2(0, 0)
+                    player.rotation = 0
+                    print(f"Player lives: {player.lives}")
+                    asteroid.kill()
         
-        # Checking for bullet and asteroid collision
+        # Checking for bullet and asteroid collisiond
         for asteroid in asteroids:
             for bullet in shots:
                 if bullet.collide(asteroid):
@@ -76,7 +85,7 @@ def main():
             sprite.draw(screen)
 
         # Draw the score
-        draw_score(screen, player.score, 10, 10)     
+        draw_score(screen, player.score, player.lives)     
                    
         
         pygame.display.flip()

@@ -11,7 +11,8 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.timer = 0
-        self.score = 0       
+        self.score = 0
+        self.lives = PLAYER_LIVES     
 
     # triangle method to get the vertices of the triangle representing the player
     def triangle(self):
