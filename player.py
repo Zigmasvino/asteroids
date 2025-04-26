@@ -12,7 +12,8 @@ class Player(CircleShape):
         self.rotation = 0
         self.timer = 0
         self.score = 0
-        self.lives = PLAYER_LIVES     
+        self.lives = PLAYER_LIVES
+        self.velocity = pygame.Vector2(0, 0)
 
     # triangle method to get the vertices of the triangle representing the player
     def triangle(self):
@@ -31,9 +32,14 @@ class Player(CircleShape):
         # Rotate the player
         self.rotation += PLAYER_TURN_SPEED * dt
     
-    def move(self, dt):
+    def move(self, dt, direction=1):
+         # Instead of directly changing position, apply acceleration to velocity
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.position += forward * PLAYER_SPEED * dt
+        # Accelerate in the direction we're facing
+        self.velocity += forward * PLAYER_ACCELERATION * direction * dt
+        # Optional: limit maximum velocity
+        if self.velocity.length() > PLAYER_MAX_SPEED:
+            self.velocity.scale_to_length(PLAYER_MAX_SPEED)
 
     
     def update(self, dt):
@@ -45,11 +51,26 @@ class Player(CircleShape):
         if keys[pygame.K_d]:
             self.rotate(dt)
         if keys[pygame.K_w]:
-            self.move(dt)
+            self.move(dt, 1)
         if keys[pygame.K_s]:
-            self.move(-dt)
+            self.move(dt, -1)
         if keys[pygame.K_SPACE] and self.timer < 0:
             self.shoot()
+        # Apply friction to gradually slow down
+        self.velocity *= (1 - PLAYER_FRICTION * dt)        
+        # Update position based on velocity
+        self.position += self.velocity * dt
+        # Add screen wrapping logic
+        if self.position.x > SCREEN_WIDTH + self.radius:
+            self.position.x = -self.radius
+        elif self.position.x < -self.radius:
+            self.position.x = SCREEN_WIDTH + self.radius
+            
+        if self.position.y > SCREEN_HEIGHT + self.radius:
+            self.position.y = -self.radius
+        elif self.position.y < -self.radius:
+            self.position.y = SCREEN_HEIGHT + self.radius
+        
     
     def shoot(self):
         self.timer = PLAYER_SHOOT_COOLDOWN
