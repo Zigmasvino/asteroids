@@ -1,10 +1,12 @@
 import pygame
 import sys
+import os
 from constants import *
 from player import Player
 from asteroid import Asteroid, Explosion
 from asteroidfield import AsteroidField
 from shot import Shot
+
 
 def draw_score(screen, score, lives):
     """
@@ -46,15 +48,20 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Asteroids")
 
+    # Load the background image
+    background = pygame.image.load('backround_image.jpg').convert()
+    background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
     # Infinite loop to keep the game running
     while True:
-        # to be able to close the game       
+        # to be able to close the game        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:                
                 return
         
         # Fill the screen with black 
-        screen.fill((0, 0, 0))
+        # screen.fill((0, 0, 0))
+        screen.blit(background, (0, 0))
         
         # Update the game objects
         updatable.update(dt)
