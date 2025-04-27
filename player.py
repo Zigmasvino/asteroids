@@ -1,7 +1,13 @@
 import pygame
+import math
 from constants import *
 from circleshape import CircleShape
 from shot import Shot
+from explosion import Explosion
+from static import segments_intersect
+
+
+
 
 class Player(CircleShape):
     """
@@ -57,6 +63,7 @@ class Player(CircleShape):
             self.move(dt, -1)
         if keys[pygame.K_SPACE] and self.timer < 0:
             self.shoot()
+
         # Apply friction to gradually slow down
         self.velocity *= (1 - PLAYER_FRICTION * dt)        
         # Update position based on velocity
@@ -70,8 +77,7 @@ class Player(CircleShape):
         if self.position.y > SCREEN_HEIGHT + self.radius:
             self.position.y = -self.radius
         elif self.position.y < -self.radius:
-            self.position.y = SCREEN_HEIGHT + self.radius
-        
+            self.position.y = SCREEN_HEIGHT + self.radius    
     
     def shoot(self):
         self.timer = PLAYER_SHOOT_COOLDOWN
@@ -80,3 +86,24 @@ class Player(CircleShape):
 
     def add_score(self, score):
         self.score += score
+    
+    def collide(self, other):
+        triangle = self.triangle()
+        asteroid_x_y = other.get_polygon_points()
+
+        # Check if the triangle intersects with the polygon
+        for i in range(3):
+            T1 = triangle[i]
+            T2 = triangle[(i + 1) % 3]
+            # Check if the line segment T1-T2 intersects with the circle
+            for j in range(len(asteroid_x_y)):
+                A = asteroid_x_y[j]
+                B = asteroid_x_y[(j + 1) % len(asteroid_x_y)]
+                if segments_intersect(T1, T2, A, B):
+                    explosion = Explosion(self.position.x, self.position.y)
+                    return True       
+        return False
+
+
+
+        

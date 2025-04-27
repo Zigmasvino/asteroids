@@ -1,11 +1,12 @@
 import pygame
 import sys
-import os
 from constants import *
 from player import Player
-from asteroid import Asteroid, Explosion
+from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
+from explosion import Explosion
+
 
 
 def draw_score(screen, score, lives):
@@ -59,31 +60,31 @@ def main():
             if event.type == pygame.QUIT:                
                 return
         
-        # Fill the screen with black 
-        # screen.fill((0, 0, 0))
+        # Set the background
         screen.blit(background, (0, 0))
         
         # Update the game objects
         updatable.update(dt)
 
         # Checking for Player and asteroid collision
-        for asteroid in asteroids:            
-            if asteroid.collide(player) and player.lives <= 1:
+        for asteroid in asteroids:
+            # Check if the player collides with an asteroid
+            if player.collide(asteroid) and player.lives > 1:
+                player.lives -= 1
+                player.position = pygame.Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+                player.velocity = pygame.Vector2(0, 0)
+                player.rotation = 0
+                print(f"Player lives: {player.lives}")
+                asteroid.kill()
+            # If the player collides with an asteroid and has no lives left, end the game
+            if player.collide(asteroid) and player.lives <= 1:
                 print("GAME OVER!")
                 sys.exit()
-            else:
-                if asteroid.collide(player):
-                    player.lives -= 1
-                    player.position = pygame.Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-                    player.velocity = pygame.Vector2(0, 0)
-                    player.rotation = 0
-                    print(f"Player lives: {player.lives}")
-                    asteroid.kill()
         
         # Checking for bullet and asteroid collisiond
         for asteroid in asteroids:
             for bullet in shots:
-                if bullet.collide(asteroid):
+                if bullet.collide_with_asteroid(asteroid):
                     bullet.kill()
                     asteroid.split(player)
 
@@ -92,16 +93,13 @@ def main():
             sprite.draw(screen)
 
         # Draw the score
-        draw_score(screen, player.score, player.lives)     
-                   
+        draw_score(screen, player.score, player.lives)   
         
         pygame.display.flip()
         # dt is the time since the last frame in seconds
         dt = clock.tick(60) / 1000.0
         # Limit the frame rate to 60 FPS
-        clock.tick(60)
-
-    
+        clock.tick(60)    
 
     
 if __name__ == "__main__":

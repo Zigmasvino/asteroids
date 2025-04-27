@@ -1,6 +1,7 @@
 import pygame
 from constants import *
 from circleshape import CircleShape
+from static import segments_intersect
 
 class Shot(CircleShape):
     """
@@ -28,3 +29,22 @@ class Shot(CircleShape):
     
     def update(self, dt):
         self.position += self.velocity * dt
+    
+    def collide_with_asteroid(self, asteroid):
+        # Calculate laser start and end points
+        direction = self.velocity.normalize() * self.laser_length
+        start_pos = self.position - direction / 2
+        end_pos = self.position + direction / 2
+        
+        asteroid_points = asteroid.get_polygon_points()
+        
+        # Check if the laser line intersects with any asteroid edge
+        for i in range(len(asteroid_points)):
+            A = asteroid_points[i]
+            B = asteroid_points[(i + 1) % len(asteroid_points)]
+            
+            if segments_intersect((start_pos.x, start_pos.y), 
+                                    (end_pos.x, end_pos.y), A, B):
+                return True
+                
+        return False
