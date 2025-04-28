@@ -10,6 +10,8 @@ class Shot(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, SHOT_RADIUS)
         self.laser_length = 15
+        self.age = 0
+        self.duration = SHOT_DURATION
 
     def draw(self, screen):
         if self.velocity.length() > 0:
@@ -28,6 +30,9 @@ class Shot(CircleShape):
         # pygame.draw.circle(screen, (224, 17, 95), (int(self.position.x), int(self.position.y)), self.radius, 2)
     
     def update(self, dt):
+        self.age += 1
+        if self.age > self.duration:
+            self.kill()
         self.position += self.velocity * dt
     
     def collide_with_asteroid(self, asteroid):
