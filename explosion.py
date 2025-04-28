@@ -20,7 +20,7 @@ class Explosion(pygame.sprite.Sprite):
         # Initialize particles 
         for _ in range(self.particle_count):
             angle = random.uniform(0, 360)
-            speed = random.uniform(0.5, 6)
+            speed = random.uniform(EXPLOSION_MIN_SPEED, EXPLOSION_MAX_SPEED)
             direction = pygame.math.Vector2(
                 math.cos(math.radians(angle)),
                 math.sin(math.radians(angle))
@@ -35,7 +35,7 @@ class Explosion(pygame.sprite.Sprite):
 
         for particle in self.particles:
             particle["position"] += particle["velocity"]
-            particle["velocity"] *= 0.9  # Slow down gradually
+            particle["velocity"] *= EXPLOSION_FRICTION  # Slow down gradually
 
     def draw(self, screen):
         for particle in self.particles:

@@ -29,6 +29,7 @@ def main():
     # Time since the last frame in seconds
     dt = 0
 
+
     # Setting up sprite groups - these are used to manage and update the game objects
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
@@ -39,11 +40,7 @@ def main():
     Asteroid.containers = updatable, drawable, asteroids
     AsteroidField.containers = updatable
     Shot.containers = shots, drawable, updatable
-    Explosion.containers = drawable,updatable
-
-    # Add the player to the updatable and drawable groups
-    player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)  
-    field = AsteroidField()
+    Explosion.containers = drawable,updatable   
     
     # Set up the game window
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -51,7 +48,12 @@ def main():
 
     # Load the background image
     background = pygame.image.load('backround_image.jpg').convert()
-    background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    # Scale the background to fit the screen
+    background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))    
+
+     # Add the player to the updatable and drawable groups
+    player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)  
+    field = AsteroidField()
 
     # Infinite loop to keep the game running
     while True:
@@ -96,10 +98,9 @@ def main():
         draw_score(screen, player.score, player.lives)   
         
         pygame.display.flip()
-        # dt is the time since the last frame in seconds
-        dt = clock.tick(60) / 1000.0
+        dt = clock.tick(120) / 1000.0
         # Limit the frame rate to 60 FPS
-        clock.tick(60)    
+        # clock.tick(120)    
 
     
 if __name__ == "__main__":

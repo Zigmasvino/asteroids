@@ -4,7 +4,6 @@ Boot.dev project - game Asteroids
 TO DO LIST:
     flame in back (or 3 blue rings for propulsion visual)
     flashing body on respawn
-    shotting from tip of player
     shooting sound
     explosion sound
     acceleration sound
@@ -21,5 +20,6 @@ TO DO LIST:
 
 Done:
     bullet lifetime
+    shotting from tip of player
 
     

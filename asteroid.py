@@ -70,7 +70,7 @@ class Asteroid(CircleShape):
         else:
             new_asteroid_1 = Asteroid(self.position.x, self.position.y, new_radius)
             new_asteroid_2 = Asteroid(self.position.x, self.position.y, new_radius)
-            new_asteroid_1.velocity = vector_1 * 1.3
-            new_asteroid_2.velocity = vector_2 * 1.4
+            new_asteroid_1.velocity = vector_1 * 1.2
+            new_asteroid_2.velocity = vector_2 * 1.3
             explosion = Explosion(self.position.x, self.position.y)
         

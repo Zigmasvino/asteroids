@@ -15,11 +15,32 @@ class Player(CircleShape):
     """
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
-        self.rotation = 0
+        self.rotation = 180
         self.timer = 0
         self.score = 0
         self.lives = PLAYER_LIVES
         self.velocity = pygame.Vector2(0, 0)
+        self.is_accelerating = False
+
+        self.ship_only = pygame.image.load("rocket.png").convert_alpha()
+        self.ship_with_flame = pygame.image.load("rocket - fire.png").convert_alpha()
+        
+        original_width = self.ship_only.get_width()
+        original_height = self.ship_only.get_height()
+        
+        aspect_ratio = original_width / original_height        
+        new_height = PLAYER_RADIUS * 5
+        new_width = int(new_height * aspect_ratio)
+        
+        self.ship_only = pygame.transform.scale(self.ship_only, (new_width, new_height))
+        self.ship_with_flame = pygame.transform.scale(self.ship_with_flame, (new_width, new_height))
+        
+        self.ship_only = pygame.transform.rotate(self.ship_only, 180)
+        self.ship_with_flame = pygame.transform.rotate(self.ship_with_flame, 180)
+        
+        self.image = self.ship_only
+        
+
 
     # triangle method to get the vertices of the triangle representing the player
     def triangle(self):
@@ -31,25 +52,55 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen):
-        # Draw the player as a triangle
-        pygame.draw.polygon(screen, (135, 134, 129), self.triangle())
-        pygame.draw.polygon(screen, (255, 255, 255), self.triangle(), 2)
+        # Choose the appropriate image based on acceleration
+        current_image = self.ship_with_flame if self.is_accelerating else self.ship_only
+        
+       # Rotate the chosen image based on the current rotation
+        rotated_image = pygame.transform.rotate(current_image, -self.rotation)
+        
+        # Calculate the center of the triangle
+        triangle_points = self.triangle()
+        triangle_center = pygame.Vector2(
+            (triangle_points[0].x + triangle_points[1].x + triangle_points[2].x) / 3,
+            (triangle_points[0].y + triangle_points[1].y + triangle_points[2].y) / 3
+        )
+
+        # Calculate the forward direction vector of the ship (normalized)
+        forward_vector = pygame.Vector2(0, 1).rotate(self.rotation)
+        
+        # Apply offset in the back direction
+        offset_amount = -18  
+        offset_position = triangle_center + forward_vector * offset_amount
+        
+        # Calculate the position to draw the image
+        image_rect = rotated_image.get_rect(center=offset_position)
+        
+        # Draw the ship image
+        screen.blit(rotated_image, image_rect)
+    
+        # Uncomment for debugging hitbox
+        # pygame.draw.polygon(screen, (255, 255, 255), self.triangle(), 2)
+    
     
     def rotate(self, dt):
         # Rotate the player
         self.rotation += PLAYER_TURN_SPEED * dt
     
     def move(self, dt, direction=1):
-         # Instead of directly changing position, apply acceleration to velocity
+        # Instead of directly changing position, apply acceleration to velocity
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         # Accelerate in the direction we're facing
         self.velocity += forward * PLAYER_ACCELERATION * direction * dt
+        
         # Optional: limit maximum velocity
         if self.velocity.length() > PLAYER_MAX_SPEED:
             self.velocity.scale_to_length(PLAYER_MAX_SPEED)
-
-    
+            
+        
+        
+        
     def update(self, dt):
+        self.is_accelerating = False
         keys = pygame.key.get_pressed()
         self.timer -= dt
 
@@ -58,6 +109,7 @@ class Player(CircleShape):
         if keys[pygame.K_d]:
             self.rotate(dt)
         if keys[pygame.K_w]:
+            self.is_accelerating = True
             self.move(dt, 1)
         if keys[pygame.K_s]:
             self.move(dt, -1)
@@ -79,9 +131,10 @@ class Player(CircleShape):
         elif self.position.y < -self.radius:
             self.position.y = SCREEN_HEIGHT + self.radius    
     
-    def shoot(self):
+    def shoot(self):        
         self.timer = PLAYER_SHOOT_COOLDOWN
-        bullet = Shot(self.position.x, self.position.y)
+        # shooting from the tip of the triangle
+        bullet = Shot(self.triangle()[0][0], self.triangle()[0][1])
         bullet.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
 
     def add_score(self, score):
