@@ -35,7 +35,7 @@ class Shot(CircleShape):
             self.kill()
         self.position += self.velocity * dt
     
-    def collide_with_asteroid(self, asteroid):
+    def collide(self, asteroid):
         # Calculate laser start and end points
         direction = self.velocity.normalize() * self.laser_length
         start_pos = self.position - direction / 2

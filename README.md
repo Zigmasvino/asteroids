@@ -2,16 +2,12 @@
 Boot.dev project - game Asteroids
 
 TO DO LIST:
-    flame in back (or 3 blue rings for propulsion visual)
     flashing body on respawn
+    invuln on respawn
     shooting sound
     explosion sound
     acceleration sound
-    game over screen
-    play again button
-    exit button
-    game over sound    
-    invuln on respawn
+    game over sound
     Power ups (speed, size, bulletspeed, firerate, bullet range, bullet size)
     Ultimate ability (full screen lazer)
     ult ready sound 
@@ -21,5 +17,12 @@ TO DO LIST:
 Done:
     bullet lifetime
     shotting from tip of player
+    flame in back during acceleration
+    rocket body
+    game over screen:
+        Player.reset
+        play again button
+        exit button
+    
 
     

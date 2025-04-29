@@ -52,35 +52,26 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen):
-        # Choose the appropriate image based on acceleration
         current_image = self.ship_with_flame if self.is_accelerating else self.ship_only
         
-       # Rotate the chosen image based on the current rotation
         rotated_image = pygame.transform.rotate(current_image, -self.rotation)
         
-        # Calculate the center of the triangle
         triangle_points = self.triangle()
         triangle_center = pygame.Vector2(
             (triangle_points[0].x + triangle_points[1].x + triangle_points[2].x) / 3,
             (triangle_points[0].y + triangle_points[1].y + triangle_points[2].y) / 3
         )
 
-        # Calculate the forward direction vector of the ship (normalized)
         forward_vector = pygame.Vector2(0, 1).rotate(self.rotation)
         
-        # Apply offset in the back direction
+        # Apply offset to match hit box with the image
         offset_amount = -18  
         offset_position = triangle_center + forward_vector * offset_amount
         
-        # Calculate the position to draw the image
-        image_rect = rotated_image.get_rect(center=offset_position)
-        
-        # Draw the ship image
-        screen.blit(rotated_image, image_rect)
-    
+        image_rect = rotated_image.get_rect(center=offset_position)        
+        screen.blit(rotated_image, image_rect)    
         # Uncomment for debugging hitbox
-        # pygame.draw.polygon(screen, (255, 255, 255), self.triangle(), 2)
-    
+        # pygame.draw.polygon(screen, (255, 255, 255), self.triangle(), 2)    
     
     def rotate(self, dt):
         # Rotate the player
@@ -95,9 +86,6 @@ class Player(CircleShape):
         # Optional: limit maximum velocity
         if self.velocity.length() > PLAYER_MAX_SPEED:
             self.velocity.scale_to_length(PLAYER_MAX_SPEED)
-            
-        
-        
         
     def update(self, dt):
         self.is_accelerating = False
@@ -153,9 +141,16 @@ class Player(CircleShape):
                 A = asteroid_x_y[j]
                 B = asteroid_x_y[(j + 1) % len(asteroid_x_y)]
                 if segments_intersect(T1, T2, A, B):
-                    explosion = Explosion(self.position.x, self.position.y)
+                    if self.lives > 1:
+                        explosion = Explosion(self.position.x, self.position.y)
                     return True       
         return False
+    
+    def reset(self):
+        self.position = pygame.Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+        self.velocity = pygame.Vector2(0, 0)
+        self.rotation = 180
+        self.lives -= 1
 
 
 
