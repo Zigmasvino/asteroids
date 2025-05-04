@@ -19,6 +19,9 @@ class Player(CircleShape):
         self.timer = 0
         self.score = 0
         self.lives = PLAYER_LIVES
+        self.invulnerable = False
+        self.invulnerable_duration = PLAYER_INVULNERABLE_DURATION
+        self.invulnerable_time = 0
         self.velocity = pygame.Vector2(0, 0)
         self.is_accelerating = False
 
@@ -67,9 +70,10 @@ class Player(CircleShape):
         # Apply offset to match hit box with the image
         offset_amount = -18  
         offset_position = triangle_center + forward_vector * offset_amount
-        
-        image_rect = rotated_image.get_rect(center=offset_position)        
-        screen.blit(rotated_image, image_rect)    
+        image_rect = rotated_image.get_rect(center=offset_position)
+
+        if not self.invulnerable or int(self.invulnerable_time * 5) % 2 == 0:
+            screen.blit(rotated_image, image_rect)
         # Uncomment for debugging hitbox
         # pygame.draw.polygon(screen, (255, 255, 255), self.triangle(), 2)    
     
@@ -88,6 +92,12 @@ class Player(CircleShape):
             self.velocity.scale_to_length(PLAYER_MAX_SPEED)
         
     def update(self, dt):
+        if self.invulnerable:
+            self.invulnerable_time += dt
+            if self.invulnerable_time >= self.invulnerable_duration:
+                self.invulnerable = False
+                self.invulnerable_time = 0
+        
         self.is_accelerating = False
         keys = pygame.key.get_pressed()
         self.timer -= dt
@@ -129,6 +139,10 @@ class Player(CircleShape):
         self.score += score
     
     def collide(self, other):
+        # Check if the player is invulnerable
+        if self.invulnerable:
+            return False
+
         triangle = self.triangle()
         asteroid_x_y = other.get_polygon_points()
 
@@ -147,6 +161,8 @@ class Player(CircleShape):
         return False
     
     def reset(self):
+        self.invulnerable = True
+        self.invulnerable_time = 0
         self.position = pygame.Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
         self.velocity = pygame.Vector2(0, 0)
         self.rotation = 180

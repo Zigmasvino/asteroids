@@ -2,8 +2,7 @@
 Boot.dev project - game Asteroids
 
 TO DO LIST:
-    flashing body on respawn
-    invuln on respawn
+    
     shooting sound
     explosion sound
     acceleration sound
@@ -13,6 +12,8 @@ TO DO LIST:
     ult ready sound 
     different weapons (shotgun, bullets, lazers, rockets, )
     shield (outline or bubble)
+    Score reached on death screen
+    Top score leaderboard
 
 Done:
     bullet lifetime
@@ -23,6 +24,8 @@ Done:
         Player.reset
         play again button
         exit button
+    flashing body on respawn
+    invulnerability on respawn
     
 
     
