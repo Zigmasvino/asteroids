@@ -30,6 +30,10 @@ def main():
     # Time since the last frame in seconds
     dt = 0
 
+    explosion_sound = pygame.mixer.Sound("Explosion2.wav")
+    explosion_sound.set_volume(EXPLOSION_VOLUME)
+
+
 
     # Setting up sprite groups - these are used to manage and update the game objects
     updatable = pygame.sprite.Group()
@@ -98,6 +102,7 @@ def main():
             for asteroid in asteroids:
                 for bullet in shots:
                     if bullet.collide(asteroid):
+                        explosion_sound.play()
                         bullet.kill()
                         asteroid.split(player)
 

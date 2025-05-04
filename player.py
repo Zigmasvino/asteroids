@@ -27,7 +27,11 @@ class Player(CircleShape):
 
         self.ship_only = pygame.image.load("rocket.png").convert_alpha()
         self.ship_with_flame = pygame.image.load("rocket - fire.png").convert_alpha()
+
+        self.thruster_sound = pygame.mixer.Sound("Thrust.wav")
+        self.thruster_sound.set_volume(THRUSTER_VOLUME)
         self.laser_sound = pygame.mixer.Sound("Laser_shoot2.wav")
+        self.laser_sound.set_volume(LAZER_VOLUME)
 
         original_width = self.ship_only.get_width()
         original_height = self.ship_only.get_height()
@@ -58,7 +62,12 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen):
-        current_image = self.ship_with_flame if self.is_accelerating else self.ship_only
+        if self.is_accelerating:
+            current_image = self.ship_with_flame
+            self.thruster_sound.play()
+        if not self.is_accelerating:
+            self.thruster_sound.stop()  
+            current_image = self.ship_only
         
         rotated_image = pygame.transform.rotate(current_image, -self.rotation)
         
@@ -112,6 +121,7 @@ class Player(CircleShape):
         if keys[pygame.K_w]:
             self.is_accelerating = True
             self.move(dt, 1)
+            self.thruster_sound.play()  # Play the sound continuously while accelerating
         if keys[pygame.K_s]:
             self.move(dt, -1)
         if keys[pygame.K_SPACE] and self.timer < 0:
