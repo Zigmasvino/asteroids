@@ -27,7 +27,8 @@ class Player(CircleShape):
 
         self.ship_only = pygame.image.load("rocket.png").convert_alpha()
         self.ship_with_flame = pygame.image.load("rocket - fire.png").convert_alpha()
-        
+        laser_sound = pygame.mixer.Sound("Laser_shoot.wav")
+
         original_width = self.ship_only.get_width()
         original_height = self.ship_only.get_height()
         
@@ -42,6 +43,8 @@ class Player(CircleShape):
         self.ship_with_flame = pygame.transform.rotate(self.ship_with_flame, 180)
         
         self.image = self.ship_only
+
+
         
 
 
@@ -131,6 +134,8 @@ class Player(CircleShape):
     
     def shoot(self):        
         self.timer = PLAYER_SHOOT_COOLDOWN
+        self.laser_sound.play()
+
         # shooting from the tip of the triangle
         bullet = Shot(self.triangle()[0][0], self.triangle()[0][1])
         bullet.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED

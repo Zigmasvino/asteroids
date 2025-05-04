@@ -23,6 +23,7 @@ def main():
     pygame.init()
     print("Starting Asteroids!")
     pygame.font.init()
+    pygame.mixer.init()
 
     # Set up the game clock
     clock = pygame.time.Clock()

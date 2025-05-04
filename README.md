@@ -1,8 +1,7 @@
 # asteroids
 Boot.dev project - game Asteroids
 
-TO DO LIST:
-    
+TO DO LIST:    
     shooting sound
     explosion sound
     acceleration sound
