@@ -27,7 +27,7 @@ class Player(CircleShape):
 
         self.ship_only = pygame.image.load("rocket.png").convert_alpha()
         self.ship_with_flame = pygame.image.load("rocket - fire.png").convert_alpha()
-        laser_sound = pygame.mixer.Sound("Laser_shoot.wav")
+        self.laser_sound = pygame.mixer.Sound("Laser_shoot2.wav")
 
         original_width = self.ship_only.get_width()
         original_height = self.ship_only.get_height()

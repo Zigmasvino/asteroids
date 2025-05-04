@@ -15,6 +15,7 @@ class Asteroid(CircleShape):
         self.rotation_speed = 0
         self.outline = []
         self.shape_point_count = int(random.uniform(9, 19))
+        self.explosion_sound = pygame.mixer.Sound("Explosion2.wav")
         for i in range(self.shape_point_count):
             angle = i * (360 / self.shape_point_count)
             distance = random.uniform(self.radius * 0.55, self.radius)
@@ -65,6 +66,7 @@ class Asteroid(CircleShape):
         new_radius = self.radius - ASTEROID_MIN_RADIUS
 
         if self.radius <= ASTEROID_MIN_RADIUS:
+            self.explosion_sound.play()
             explosion = Explosion(self.position.x, self.position.y)
             return "this was a small asteroid"            
         else:
@@ -73,4 +75,5 @@ class Asteroid(CircleShape):
             new_asteroid_1.velocity = vector_1 * 1.2
             new_asteroid_2.velocity = vector_2 * 1.3
             explosion = Explosion(self.position.x, self.position.y)
+            self.explosion_sound.play()
         
