@@ -1,5 +1,6 @@
 import pygame
 import math
+from pathlib import Path
 from constants import *
 from circleshape import CircleShape
 from shot import Shot
@@ -25,12 +26,12 @@ class Player(CircleShape):
         self.velocity = pygame.Vector2(0, 0)
         self.is_accelerating = False
 
-        self.ship_only = pygame.image.load("rocket.png").convert_alpha()
-        self.ship_with_flame = pygame.image.load("rocket - fire.png").convert_alpha()
+        self.ship_only = pygame.image.load(Path("assets/rocket.png")).convert_alpha()
+        self.ship_with_flame = pygame.image.load(Path("assets/rocket - fire.png")).convert_alpha()
 
-        self.thruster_sound = pygame.mixer.Sound("Thrust.wav")
+        self.thruster_sound = pygame.mixer.Sound("assets/Thrust.wav")
         self.thruster_sound.set_volume(THRUSTER_VOLUME)
-        self.laser_sound = pygame.mixer.Sound("Laser_shoot2.wav")
+        self.laser_sound = pygame.mixer.Sound("assets/Laser_shoot2.wav")
         self.laser_sound.set_volume(LAZER_VOLUME)
 
         original_width = self.ship_only.get_width()

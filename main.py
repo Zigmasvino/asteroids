@@ -1,5 +1,6 @@
 import pygame
 import sys
+from pathlib import Path
 from constants import *
 from player import Player
 from asteroid import Asteroid
@@ -7,6 +8,7 @@ from asteroidfield import AsteroidField
 from shot import Shot
 from explosion import Explosion
 from game_over_screen import Draw_game_over_screen
+
 
 
 
@@ -30,7 +32,7 @@ def main():
     # Time since the last frame in seconds
     dt = 0
 
-    explosion_sound = pygame.mixer.Sound("Explosion2.wav")
+    explosion_sound = pygame.mixer.Sound("assets/Explosion2.wav")
     explosion_sound.set_volume(EXPLOSION_VOLUME)
 
 
@@ -52,7 +54,7 @@ def main():
     pygame.display.set_caption("Asteroids")
 
     # Load the background image
-    background = pygame.image.load('backround_image.jpg').convert()
+    background = pygame.image.load(Path('assets/backround_image.jpg')).convert()
     background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))    
 
      # Add the player to the updatable and drawable groups
